@@ -1,0 +1,46 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: kferterb <kferterb@student.21-school.ru    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2022/11/04 09:16:33 by kferterb          #+#    #+#              #
+#    Updated: 2022/11/04 09:16:34 by kferterb         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+NAME = ircserv
+
+SRCS = main.cpp Server.cpp Client.cpp	Message.cpp		Channel.cpp		Bot.cpp
+
+INCS = Server.hpp Client.hpp	Message.cpp		Channel.hpp		Bot.hpp
+
+OBJS = $(addprefix objs/, $(SRCS:.cpp=.o))
+
+DEPS = $(wildcard objs/*.d)
+
+CXX = c++
+
+CFLAGS = -Wall -Wextra -Werror -std=c++98 -g
+
+objs/%.o:	src/%.cpp
+			@ [ -d objs ] || mkdir -p objs
+			$(CXX) $(CFLAGS) -MMD -c $< -o $@ -I./include
+
+$(NAME):	$(OBJS)
+			$(CXX) -o $@ $^ -fsanitize=address
+
+all:		$(NAME)
+
+clean:
+			$(RM)r $(OBJS) $(DEPS) objs
+
+fclean:		clean
+			$(RM) $(NAME)
+
+re:			fclean all
+
+.PHONY:		all clean fclean re
+
+include		$(DEPS)
